@@ -23,6 +23,8 @@ const magnificationInput = document.getElementById('magnification');
 // const panXInput = document.getElementById('panX');
 // const panYInput = document.getElementById('panY');
 
+// This was my attempt to memoize previously calculated pixels for faster panning
+// Bad idea because it gets huge way too fast
 // const mandelbrotSet = {};
 
 // Check whether a pair of coordinates belongs to the Mandelbrot set
@@ -40,14 +42,15 @@ function checkSet(x, y) {
     imaginary = tempImaginary;
 
     if (real * imaginary > 5) {
-      return i
-      // const output = i / iterations * 100;
+      // return i
+      const output = i / iterations * 100;
       // mandelbrotSet[x + ',' + y] = output;
-      // return output;
+      return output;
     }
   }
   // mandelbrotSet[x + ',' + y] = 0
-  return iterations;
+  // return iterations;
+  return 0;
 }
 
 // View settings
@@ -69,9 +72,9 @@ function draw() {
     for (let y = 0; y < height; y++) {
       const belongsToSet = checkSet(x / magnification - panX,
                                     y / magnification - panY);
-      const [r, g, b] = rgbNum(belongsToSet)
-      ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-      // ctx.fillStyle =`hsl(0, 100%, ${belongsToSet}%)`
+      // const [r, g, b] = rgbNum(belongsToSet)
+      // ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+      ctx.fillStyle =`hsl(0, 100%, ${belongsToSet}%)`
       ctx.fillRect(x, y, 1, 1);
     }
   }
