@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Fractal Madness</title>
+    <style>
+      body {
+        margin: 0;
+        border-width: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body oncontextmenu="return false;">
+    <div id='canvas'></div>
+    <form id="settingsForm" onsubmit="return false">
+      <label for="iterations">Iterations</label>
+      <input id="iterations" type="number"></input>
+      <label for="magnification">Magnification</label>
+      <input id="magnification"></input>
+      <!-- <label for="panX">panX</label>
+      <input id="panX"></input>
+      <label for="panY">panY</label>
+      <input id="panY"></input> -->
+      <input id="setSettings" type="submit"></input>
+    </form>
+    <h3>
+      Pan: Arrow Keys or WASD
+      <br>
+      Zoom out / in: - / + or < / >
+    </h3>
+    <script src="color.js"></script>
+    <script src="mandelbrot.js"></script>
+  </body>
+</html>
