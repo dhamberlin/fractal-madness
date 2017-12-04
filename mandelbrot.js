@@ -1,16 +1,9 @@
-const width = 500 //window.innerWidth;
-const height = 400 //window.innerHeight;
+const width = 800 //window.innerWidth;
+const height = 500 //window.innerHeight;
 
-let iterations = 120
+let iterations = 200
+let shouldRender = false;
 
-
-const viewSettings = {
-  panSpeed: 80,
-  zoomFactor: .1,
-  magnification: 150,
-  panX: 2,
-  panY: 1.5,
-}
 
 // Set up canvas, get refs to html
 const canvas = document.createElement('canvas');
@@ -23,14 +16,9 @@ const magnificationInput = document.getElementById('magnification');
 // const panXInput = document.getElementById('panX');
 // const panYInput = document.getElementById('panY');
 
-// This was my attempt to memoize previously calculated pixels for faster panning
-// Bad idea because it gets huge way too fast
-// const mandelbrotSet = {};
 
 // Check whether a pair of coordinates belongs to the Mandelbrot set
 function checkSet(x, y) {
-  // const cachedValue = mandelbrotSet[x+','+y];
-  // if (cachedValue !== undefined) return cachedValue;
   let real = x;
   let imaginary = y;
 
@@ -55,15 +43,19 @@ function checkSet(x, y) {
 
 // View settings
 
-const panSpeed = 80;
-const zoomFactor = .1;
-let magnification = 150;
-let panX = 2;
-let panY = 1.5;
-
+let viewSettings = {
+  panSpeed: 80,
+  zoomFactor: .1,
+  magnification: 150,
+  panX: 2,
+  panY: 1.5,
+}
 
 // Draw
 function draw() {
+  isRendering = true
+  let { panSpeed, zoomFactor, magnification, panX, panY } = viewSettings
+  let { width, height } = canvas
   console.log(iterations)
   const start = performance.now();
 
@@ -87,59 +79,77 @@ function draw() {
     magnificationInput.value = magnification;
     // panXInput.value = panX;
     // panYInput.value = panY;
+    if (shouldRender) {
+      setTimeout(draw, 0)
+    } else {
+      isRendering = false
+    }
 }
 
-draw()
+function setDPI(canvas, dpi) {
+  // Set up CSS size.
+  canvas.style.width = canvas.style.width || canvas.width + 'px';
+  canvas.style.height = canvas.style.height || canvas.height + 'px';
+
+  // Resize canvas and scale future draws.
+  var scaleFactor = dpi / 96;
+  canvas.width = Math.ceil(canvas.width * scaleFactor);
+  canvas.height = Math.ceil(canvas.height * scaleFactor);
+  var ctx = canvas.getContext('2d');
+  ctx.scale(scaleFactor, scaleFactor);
+}
 
 function zoomIn() {
-  magnification = magnification * (1 + zoomFactor);
+  viewSettings.magnification *= (1 + viewSettings.zoomFactor);
   // draw();
 }
 
 function zoomOut() {
-  magnification = magnification * (1 - zoomFactor);
+  viewSettings.magnification *= (1 - viewSettings.zoomFactor);
   // draw();
 }
 
-let drawCooldown = false;
+
 function handleKeyDown(e) {
-  let shouldRender = true;
+  const { magnification, zoomFactor, panSpeed } = viewSettings
   // console.log(e.key)
   switch(e.key) {
     case 'ArrowRight':
     case 'd':
-      panX -= panSpeed / magnification;
+      viewSettings.panX -= panSpeed / magnification;
+      shouldRender = true
       break;
     case 'ArrowLeft':
     case 'a':
-      panX += panSpeed / magnification;
+      viewSettings.panX += panSpeed / magnification;
+      shouldRender = true
       break;
     case 'ArrowUp':
     case 'w':
-      panY += panSpeed / magnification;
+      viewSettings.panY += panSpeed / magnification;
+      shouldRender = true
       break;
     case 'ArrowDown':
     case 's':
-      panY -= panSpeed / magnification;
+      viewSettings.panY -= panSpeed / magnification;
+      shouldRender = true
       break;
     case ',':
     case '-':
-      magnification = magnification * (1 - zoomFactor);
+      viewSettings.magnification = magnification * (1 - zoomFactor);
+      shouldRender = true
       break;
     case '.':
     case '=':
-      magnification = magnification * (1 + zoomFactor);
+      viewSettings.magnification = magnification * (1 + zoomFactor);
+      shouldRender = true
       break;
     default:
-      shouldRender = false;
       break;
   }
-  if (shouldRender && !drawCooldown) {
-    drawCooldown = true;
-    setTimeout(() => {
-      drawCooldown = false;
-      draw()
-    }, 300)
+  if (shouldRender && !isRendering) {
+    isRendering = true
+    setTimeout(draw, 0)
   }
 }
 
@@ -150,5 +160,42 @@ function setSettings(e) {
   draw()
 }
 
+function saveView() {
+  window.localStorage.viewSettings = JSON.stringify(viewSettings)
+  console.log('Saved view:')
+  console.log(window.localStorage.viewSettings)
+}
+
+function loadView() {
+  viewSettings = JSON.parse(window.localStorage.viewSettings)
+  console.log('Loaded view: ')
+  console.log(viewSettings)
+  draw()
+}
+
+function captureView() {
+  const img = document.createElement('img')
+  // img.width = width /4
+  // img.height = height /4
+  img.src = canvas.toDataURL()
+  img.style.width = width
+  img.style.height = height
+  document.body.appendChild(img)
+
+}
+
+function handleAnimateClick () {
+  canvas.classList.toggle('animate')
+  document.getElementById('canvas').classList.toggle('animate2')
+}
+
+// setDPI(canvas, 96 * 4)
+draw()
+
 window.addEventListener('keydown', handleKeyDown)
 document.getElementById('settingsForm').addEventListener('submit', setSettings);
+
+document.getElementById('animate-button').addEventListener('click', handleAnimateClick)
+document.getElementById('save-view').addEventListener('click', saveView)
+document.getElementById('load-view').addEventListener('click', loadView)
+document.getElementById('capture-view').addEventListener('click', captureView)

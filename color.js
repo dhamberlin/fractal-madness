@@ -9,7 +9,8 @@ function rgbNum(escapeTime) {
 
   let redNum, greenNum, blueNum;
   let rgbIncrements = Math.floor(iterations / 7);
-  let caseNum = Math.floor(escapeTime / rgbIncrements);
+  // let caseNum = Math.floor(escapeTime / rgbIncrements);
+  let caseNum = Math.floor(Math.random * 7)
   let remainNum = escapeTime % rgbIncrements;
 
   switch (caseNum) {
