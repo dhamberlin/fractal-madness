@@ -146,10 +146,10 @@ function handleKeyDown(e) {
   }
 
   if (shouldRender && !isRendering) {
-    isRendering = true
+    // isRendering = true
     shouldRender = false
     clearTimeout(keyDownTimeout)
-    setTimeout(draw, 200)
+    keyDownTimeout = setTimeout(draw, 300)
   }
 }
 
