@@ -1,7 +1,7 @@
 const width = 800 //window.innerWidth;
 const height = 500 //window.innerHeight;
 
-let iterations = 200
+// let iterations = 200
 let shouldRender = false;
 
 
@@ -19,6 +19,7 @@ const magnificationInput = document.getElementById('magnification');
 
 // Check whether a pair of coordinates belongs to the Mandelbrot set
 function checkSet(x, y) {
+  const { iterations } = viewSettings
   let real = x;
   let imaginary = y;
 
@@ -44,26 +45,27 @@ function checkSet(x, y) {
 // View settings
 
 let viewSettings = {
-  panSpeed: 80,
+  panSpeed: 50,
   zoomFactor: .1,
   magnification: 150,
-  panX: 2,
-  panY: 1.5,
+  panX: 0,
+  panY: 0,
+  iterations: 200
 }
 
 // Draw
 function draw() {
   isRendering = true
-  let { panSpeed, zoomFactor, magnification, panX, panY } = viewSettings
+  let { magnification, panX, panY, iterations } = viewSettings
   let { width, height } = canvas
-  console.log(iterations)
   const start = performance.now();
 
 
   for (let x = 0; x < width; x++) {
     for (let y = 0; y < height; y++) {
-      const belongsToSet = checkSet(x / magnification - panX,
-                                    y / magnification - panY);
+      const currentX = ((x - width / 2) / magnification) - panX
+      const currentY = ((y - height / 2) / magnification) - panY
+      const belongsToSet = checkSet(currentX, currentY);
       // const [r, g, b] = rgbNum(belongsToSet)
       // ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
       ctx.fillStyle =`hsl(0, 100%, ${belongsToSet}%)`
@@ -71,19 +73,14 @@ function draw() {
     }
   }
 
-    const stop = performance.now();
-    console.log(`render time: ${stop - start}ms`)
+  const stop = performance.now();
+  console.log(`render time: ${stop - start}ms`)
 
-    // Set settings pannel
-    iterationInput.value = iterations;
-    magnificationInput.value = magnification;
-    // panXInput.value = panX;
-    // panYInput.value = panY;
-    if (shouldRender) {
-      setTimeout(draw, 0)
-    } else {
-      isRendering = false
-    }
+  // Set settings pannel
+  iterationInput.value = iterations;
+  magnificationInput.value = magnification;
+
+  isRendering = false
 }
 
 function setDPI(canvas, dpi) {
@@ -109,7 +106,7 @@ function zoomOut() {
   // draw();
 }
 
-
+let keyDownTimeout
 function handleKeyDown(e) {
   const { magnification, zoomFactor, panSpeed } = viewSettings
   // console.log(e.key)
@@ -147,16 +144,18 @@ function handleKeyDown(e) {
     default:
       break;
   }
+
   if (shouldRender && !isRendering) {
     isRendering = true
-    setTimeout(draw, 0)
+    shouldRender = false
+    clearTimeout(keyDownTimeout)
+    setTimeout(draw, 200)
   }
 }
 
 function setSettings(e) {
-  console.log('yo')
   // e.preventDefault()
-  iterations = iterationInput.value
+  viewSettings.iterations = iterationInput.value
   draw()
 }
 

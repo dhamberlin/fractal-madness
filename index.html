@@ -12,11 +12,11 @@
         color: #ddd;
       }
       .animate {
-        -webkit-animation: filter-animation 29s infinite;
+        -webkit-animation: filter-animation 59s infinite;
       }
 
       .animate2 {
-        -webkit-animation: filter-animation-2 10s infinite;
+        -webkit-animation: filter-animation-2 15s infinite;
       }
       @-webkit-keyframes filter-animation {
         0% {
@@ -37,7 +37,7 @@
         }
 
         50% {
-          -webkit-filter: saturate(10);
+          -webkit-filter: saturate(5);
         }
         100% {
           -webkit-filter:  saturate(1);
@@ -46,27 +46,29 @@
     </style>
   </head>
   <body oncontextmenu="return false;">
+
     <div id='canvas'></div>
+
     <form id="settingsForm" onsubmit="return false">
       <label for="iterations">Iterations</label>
       <input id="iterations" type="number"></input>
       <label for="magnification">Magnification</label>
       <input id="magnification"></input>
-      <!-- <label for="panX">panX</label>
-      <input id="panX"></input>
-      <label for="panY">panY</label>
-      <input id="panY"></input> -->
       <input id="setSettings" type="submit"></input>
     </form>
+
+    <!-- Buttons -->
     <button id="animate-button">Animate</button>
     <button id="save-view">Save View</button>
     <button id="load-view">Load View</button>
     <button id="capture-view">Capture View</button>
+
     <h3>
       Pan: Arrow Keys or WASD
       <br>
       Zoom out / in: - / + or < / >
     </h3>
+
     <script src="color.js"></script>
     <script src="mandelbrot.js"></script>
   </body>
