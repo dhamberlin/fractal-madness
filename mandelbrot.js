@@ -1,5 +1,7 @@
-const width = 600 // window.innerWidth;
-const height = 480 // window.innerHeight;
+const width = window.innerWidth;
+const height = window.innerHeight;
+// const width = 600 // window.innerWidth;
+// const height = 480 // window.innerHeight;
 const workerCount = 8
 
 let workers = []
@@ -13,7 +15,7 @@ let isRendering = false
 // View settings
 
 let viewSettings = {
-  panSpeed: 50,
+  panSpeed: 30,
   zoomFactor: .1,
   magnification: 150,
   panX: 0,
