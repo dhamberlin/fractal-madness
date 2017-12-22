@@ -52,11 +52,21 @@ function spawnWorkers() {
 
 function startJob() {
   if (running) stopJob()
+  jobNum++
   renderStart = performance.now()
 
   let { width, height } = canvas
 
-  for (let row = 0; row < height; row++) {
+  for (let i = 0; i < width / 2; i++) {
+    let row = i
+    jobs.push({
+      jobNum,
+      row,
+      width,
+      height,
+      viewSettings,
+    })
+    row = width - 1 - i
     jobs.push({
       jobNum,
       row,
