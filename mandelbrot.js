@@ -1,7 +1,7 @@
-const width = window.innerWidth;
-const height = window.innerHeight;
-// const width = 600 // window.innerWidth;
-// const height = 480 // window.innerHeight;
+// const width = window.innerWidth;
+// const height = window.innerHeight;
+const width = 600 // window.innerWidth;
+const height = 480 // window.innerHeight;
 const workerCount = 8
 
 let workers = []
