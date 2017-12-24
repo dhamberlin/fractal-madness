@@ -1,8 +1,8 @@
-// const width = window.innerWidth;
-// const height = window.innerHeight;
-const width = 600 // window.innerWidth;
-const height = 480 // window.innerHeight;
-const workerCount = 8
+const width = window.innerWidth;
+const height = window.innerHeight;
+// const width = 600 // window.innerWidth;
+// const height = 480 // window.innerHeight;
+const workerCount = 2
 
 let workers = []
 let running = false
@@ -52,6 +52,106 @@ function spawnWorkers() {
   }
 }
 
+jobMaker = {
+  pixels: [],
+  setSpiral: () => {
+    // if (pixels.length) {
+
+    // }
+
+  },
+
+  fromCenter: () => {
+    let { width, height } = canvas
+    for (let i = 0; i < width / 2; i++) {
+      let row = i
+      jobs.push({
+        jobNum,
+        row,
+        width,
+        height,
+        viewSettings,
+      })
+      row = width - 1 - i
+      jobs.push({
+        jobNum,
+        row,
+        width,
+        height,
+        viewSettings,
+      })
+    }
+  },
+
+  spiral: () => {
+    let { width, height } = canvas
+    let pixels = []
+
+    let xmin = 0
+    let xmax = width - 1
+    let ymin = 0
+    let ymax = height - 1
+    let x = 0;
+    let y = 0;
+
+    const push = () => {
+      pixels.push({ x, y })
+    }
+
+    while ((xmin < xmax) && (ymin < ymax)) {
+
+      // go west
+      while (x < xmax) {
+        push()
+        x++
+      }
+      ymin++
+
+      // go south
+      while (y < ymax) {
+        push()
+        y++
+      }
+      xmax--
+
+      // go east
+      while (x > xmin) {
+        push()
+        x--
+      }
+      ymax--
+
+      // go north
+      while (y > ymin) {
+        push()
+        y--
+      }
+      xmin++
+    }
+    console.log(pixels.length, 'pixels')
+    let pixelIdx = 0
+    while (pixelIdx < pixels.length) {
+
+      let jobPixels = []
+      for (let i = 0; i < 300; i++) {
+        jobPixels.push(pixels[pixelIdx])
+        pixelIdx++
+      }
+
+      const job = {
+        jobNum,
+        pixels: jobPixels,
+        width,
+        height,
+        viewSettings,
+      }
+      jobs.push(job)
+
+    }
+  }
+
+}
+
 function startJob() {
   if (running) stopJob()
   jobNum++
@@ -59,24 +159,9 @@ function startJob() {
 
   let { width, height } = canvas
 
-  for (let i = 0; i < width / 2; i++) {
-    let row = i
-    jobs.push({
-      jobNum,
-      row,
-      width,
-      height,
-      viewSettings,
-    })
-    row = width - 1 - i
-    jobs.push({
-      jobNum,
-      row,
-      width,
-      height,
-      viewSettings,
-    })
-  }
+  jobMaker.spiral()
+  console.log('Time to spiral: ', performance.now() - renderStart)
+
   for (let i in workers) {
     const job = jobs.pop()
     job.workerId = i
@@ -89,18 +174,25 @@ function stopJob() {
   jobs = []
 }
 
+const fills = {
+  rgb: count => `rgb(0,${Math.floor(count * 2.55)}, 0)`,
+  red: count => `rgb(${Math.floor(count * 2.55)}, 0, 0)`,
+  blue: count => `rgb(0, 0, ${Math.floor(count * 2.55)})`,
+  green: count => `rgb(0,${Math.floor(count * 2.55)}, 0)`,
+  hsl: count => `hsl(0, 100%, ${count}%)`
+}
+
 function finishJob(msg) {
   jobsFinished++
   const job = msg.data
   if (job.jobNum !== jobNum) return
 
-  const { row, width, counts, workerId } = job
-
-  for (let col in counts) {
+  const { counts, workerId } = job
+  for (let i in counts) {
+    const { x, y, count } = counts[i]
     ctx.fill()
-    // ctx.fillStyle =`hsl(0, 100%, ${counts[col]}%)`
-    ctx.fillStyle = `rgb(0,${Math.floor(counts[col] * 2.55)}, 0)`
-    ctx.fillRect(row, col, 1, 1);
+    ctx.fillStyle = fills.blue(count)
+    ctx.fillRect(x, y, 1, 1)
   }
 
   if (jobs.length) {
@@ -116,61 +208,14 @@ function finishJob(msg) {
   }
 }
 
-// Check whether a pair of coordinates belongs to the Mandelbrot set
-function checkSet(x, y) {
-  const { iterations } = viewSettings
-  let real = x;
-  let imaginary = y;
-
-  for (let i = 0; i < iterations; i++) {
-    // Calculate the real and imaginary components of the result separately
-    const tempReal = real**2 - imaginary**2 + x;
-    const tempImaginary =  2 * real * imaginary + y;
-    real = tempReal;
-    imaginary = tempImaginary;
-
-    if (real * imaginary > 5) {
-      // return i
-      const output = i / iterations * 100;
-      // mandelbrotSet[x + ',' + y] = output;
-      return output;
-    }
-  }
-  // mandelbrotSet[x + ',' + y] = 0
-  // return iterations;
-  return 0;
-}
-
 // Draw
 function draw() {
   startJob()
-  // return
-  isRendering = true
-  let { magnification, panX, panY, iterations } = viewSettings
-  // let { width, height } = canvas
-  // const start = performance.now();
-  //
-  //
-  // for (let x = 0; x < width; x++) {
-  //   for (let y = 0; y < height; y++) {
-  //     const currentX = ((x - width / 2) / magnification) - panX
-  //     const currentY = ((y - height / 2) / magnification) - panY
-  //     const belongsToSet = checkSet(currentX, currentY);
-  //     // const [r, g, b] = rgbNum(belongsToSet)
-  //     // ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-  //     ctx.fillStyle =`hsl(0, 100%, ${belongsToSet}%)`
-  //     ctx.fillRect(x, y, 1, 1);
-  //   }
-  // }
-  //
-  // const stop = performance.now();
-  // console.log(`render time: ${stop - start}ms`)
-
+  
   // Set settings pannel
+  let { magnification, panX, panY, iterations } = viewSettings
   iterationInput.value = iterations;
   magnificationInput.value = magnification;
-
-  // isRendering = false
 }
 
 function setDPI(canvas, dpi) {
@@ -196,7 +241,6 @@ function zoomOut() {
   // draw();
 }
 
-let keyDownTimeout
 function handleKeyDown(e) {
   const { magnification, zoomFactor, panSpeed } = viewSettings
   // console.log(e.key)
@@ -235,13 +279,9 @@ function handleKeyDown(e) {
       break;
   }
 
-  // if (shouldRender && !isRendering) {
   if (shouldRender) {
-    draw()
-  //   // isRendering = true
     shouldRender = false
-  //   clearTimeout(keyDownTimeout)
-  //   keyDownTimeout = setTimeout(draw, 300)
+    draw()
   }
 }
 
@@ -282,7 +322,8 @@ function handleAnimateClick () {
 
 // setDPI(canvas, 96 * 4)
 spawnWorkers()
-draw()
+// draw()
+// jobMaker.setSpiral()
 
 window.addEventListener('keydown', handleKeyDown)
 document.getElementById('settingsForm').addEventListener('submit', setSettings);

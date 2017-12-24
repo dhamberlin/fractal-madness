@@ -56,21 +56,47 @@ function checkRow(row, width, height, viewSettings) {
   return counts
 }
 
-onmessage = (msg) => {
-   const {
-     row,
-     width,
-     height,
-     viewSettings,
-     workerId,
-     jobNum
-   } = msg.data;
+function checkJob(job) {
+  const {
+    pixels,
+    viewSettings: {
+      magnification, panX, panY, iterations
+    },
+    width,
+    height
+  } = job
+  const counts = []
 
-   counts = checkRow(row, width, height, viewSettings);
+  for (let i in pixels) {
+    const { x, y } = pixels[i]
+    const currentX = ((x - width / 2) / magnification) - panX
+    const currentY = ((y - height / 2) / magnification) - panY
+    const count = checkPixel(currentX, currentY, iterations)
+    counts.push({ x, y, count})
+  }
+  return counts
+}
+
+onmessage = (msg) => {
+  //  const {
+  //    row,
+  //    width,
+  //    height,
+  //    viewSettings,
+  //    workerId,
+  //    jobNum
+  //  } = msg.data;
+
+  const job = msg.data
+  const { workerId, jobNum } = job
+
+  //  counts = checkRow(row, width, height, viewSettings);
+  const counts = checkJob(job)
+
    postMessage({
       workerId,
       jobNum,
-      row,
+      // row,
       counts
    });
 }
