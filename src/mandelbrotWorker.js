@@ -33,14 +33,10 @@ function checkPixel(x, y, iterations) {
     imaginary = tempImaginary;
 
     if (real * imaginary > 5) {
-      // return i
       const output = i / iterations * 100;
-      // mandelbrotSet[x + ',' + y] = output;
       return output;
     }
   }
-  // mandelbrotSet[x + ',' + y] = 0
-  // return iterations;
   return 0;
 }
 
@@ -69,8 +65,10 @@ function checkJob(job) {
 
   for (let i in pixels) {
     const { x, y } = pixels[i]
-    const currentX = ((x - width / 2) / magnification) - panX
-    const currentY = ((y - height / 2) / magnification) - panY
+    // const currentX = ((x - width / 2) / magnification) - panX
+    // const currentY = ((y - height / 2) / magnification) - panY
+    const currentX = (x / magnification) - panX
+    const currentY = (y / magnification) - panY
     const count = checkPixel(currentX, currentY, iterations)
     counts.push({ x, y, count})
   }

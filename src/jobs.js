@@ -7,14 +7,6 @@ function spawnWorkers() {
 }
 
 jobMaker = {
-  pixels: [],
-  setSpiral: () => {
-    // if (pixels.length) {
-
-    // }
-
-  },
-
   fromCenter: () => {
     let { width, height } = canvas
     for (let i = 0; i < width / 2; i++) {
@@ -36,88 +28,24 @@ jobMaker = {
       })
     }
   },
-
-  spiral: () => {
-    let { width, height } = canvas
-    let pixels = []
-
-    let xmin = 0
-    let xmax = width - 1
-    let ymin = 0
-    let ymax = height - 1
-    let x = 0;
-    let y = 0;
-
-    const push = () => {
-      pixels.push({ x, y })
-    }
-
-    while ((xmin < xmax) && (ymin < ymax)) {
-
-      // go west
-      while (x < xmax) {
-        push()
-        x++
-      }
-      ymin++
-
-      // go south
-      while (y < ymax) {
-        push()
-        y++
-      }
-      xmax--
-
-      // go east
-      while (x > xmin) {
-        push()
-        x--
-      }
-      ymax--
-
-      // go north
-      while (y > ymin) {
-        push()
-        y--
-      }
-      xmin++
-    }
-    console.log(pixels.length, 'pixels')
-    let pixelIdx = 0
-    while (pixelIdx < pixels.length) {
-
-      let jobPixels = []
-      for (let i = 0; i < 300 && pixelIdx < pixels.length; i++) {
-        jobPixels.push(pixels[pixelIdx])
-        pixelIdx++
-      }
-
-      const job = {
-        jobNum,
-        pixels: jobPixels,
-        width,
-        height,
-        viewSettings,
-      }
-      jobs.push(job)
-
-    }
-  }
-
 }
+
+let iterator
 
 function startJob() {
   if (running) stopJob()
   jobNum++
   renderStart = performance.now()
-
+  
   let { width, height } = canvas
+  iterator = spiralMaker(width, height)
 
-  jobMaker.spiral()
+  // jobMaker.spiral()
   console.log('Time to spiral: ', performance.now() - renderStart)
 
   for (let i in workers) {
-    const job = jobs.pop()
+    // const job = jobs.pop()
+    const job = makeJob()
     job.workerId = i
     workers[i].postMessage(job)
   }
@@ -137,7 +65,6 @@ const fills = {
 }
 
 function finishJob(msg) {
-  jobsFinished++
   const job = msg.data
   if (job.jobNum !== jobNum) return
 
@@ -149,8 +76,9 @@ function finishJob(msg) {
     ctx.fillRect(x, y, 1, 1)
   }
 
-  if (jobs.length) {
-    const newJob = jobs.pop()
+  const newJob = makeJob()
+
+  if (newJob.pixels.length) {
     newJob.workerId = workerId
     workers[workerId].postMessage(newJob)
   } else {
@@ -160,4 +88,55 @@ function finishJob(msg) {
     renderFinish = performance.now()
     renderTimeDisplay.innerHTML = `renderTime: ${renderFinish - renderStart}`
   }
+}
+
+function* spiralMaker(w, h) {
+  let x = 0,
+      y = 0,
+      dx = 0,
+      dy = -1,
+      maxI = Math.max(w*w, h*h)
+
+  for(let i = 0; i < maxI; i++) {
+    
+    if (-w/2 <= x
+        && x < w/2
+        && -h/2 < y
+        && y <= h/2
+      ) {
+          yield { x, y }
+        }
+
+    // handle corners
+    if (
+      x === y
+      || (x < 0 && x === -y)
+      || (x > 0 && x === 1 - y)
+    ) {
+      [dx, dy] = [-dy, dx]
+    }
+
+    x += dx
+    y += dy
+  }
+}
+
+function makeJob() {
+  const pixels = []
+
+  for (let i = 0; i < 600; i++) {
+    const pixel = iterator.next().value
+    if (pixel) {
+      pixels.push(pixel)
+    }
+  }
+
+  return {
+    jobNum,
+    pixels,
+    width,
+    height,
+    viewSettings
+  }
+
 }

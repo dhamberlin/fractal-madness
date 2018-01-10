@@ -1,7 +1,7 @@
-const width = window.innerWidth;
-const height = window.innerHeight;
-// const width = 600 // window.innerWidth;
-// const height = 480 // window.innerHeight;
+const width = window.innerWidth * 2;
+const height = window.innerHeight * 2;
+// const width = 600 * 3 // window.innerWidth;
+// const height = 480 * 2 // window.innerHeight;
 const workerCount = 8
 
 let workers = []
@@ -17,7 +17,7 @@ let isRendering = false
 let viewSettings = {
   panSpeed: 30,
   zoomFactor: .1,
-  magnification: 150,
+  magnification: 450,
   panX: 0,
   panY: 0,
   iterations: 200
@@ -33,6 +33,8 @@ canvas.width = width;
 canvas.height = height;
 document.getElementById('canvas').appendChild(canvas);
 const ctx = canvas.getContext('2d');
+ctx.translate(width / 2, height / 2)
+
 const iterationInput = document.getElementById('iterations');
 const magnificationInput = document.getElementById('magnification');
 const renderTimeDisplay = document.getElementById('renderTimeDisplay')
@@ -144,8 +146,7 @@ function handleAnimateClick() {
 
 // setDPI(canvas, 96 * 4)
 spawnWorkers()
-// draw()
-// jobMaker.setSpiral()
+draw()
 
 window.addEventListener('keydown', handleKeyDown)
 document.getElementById('settingsForm').addEventListener('submit', setSettings);
