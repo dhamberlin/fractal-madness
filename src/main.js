@@ -18,7 +18,8 @@ let viewSettings = {
   panX: .5,
   panY: 0,
   iterations: 60,
-  color: 'red'
+  color: 'red',
+  resolutionFactor: 1
 }
 
 let shouldRender = false;
@@ -145,9 +146,15 @@ function handleKeyDown(e) {
 }
 
 function setSettings(e) {
+  const oldRes = viewSettings.resolutionFactor
+  const newRes = document.getElementById('resolutionInput').checked ? 2 : 1
+  if (oldRes !== newRes) {
+    viewSettings.magnification *= newRes / oldRes
+  }
+  viewSettings.resolutionFactor = newRes
   viewSettings.iterations = iterationInput.value
   viewSettings.color = document.querySelector('.color-select').value
-  draw()
+  handleResize()
   toggleSettingsPanel()
 }
 
@@ -186,9 +193,9 @@ function stopPropagationAndPreventDefault(e) {
 }
 
 function handleResize() {
-  console.log('resize')
-  width = window.innerWidth * viewSettings.resolution
-  height = window.innerHeight * viewSettings.resolution
+  const { resolutionFactor } = viewSettings
+  width = window.innerWidth * resolutionFactor
+  height = window.innerHeight * resolutionFactor
   canvas.width = width
   canvas.height = height
   ctx.translate(width / 2, height / 2)

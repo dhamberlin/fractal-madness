@@ -201,7 +201,6 @@ img {
 }
 
 .color-select {
-  margin-bottom: 1rem;
   min-height: 2.5rem;
   width: 100%;
   color: #111;
@@ -242,4 +241,8 @@ img {
 
 input {
   width: 3rem;
+}
+
+#resolutionInput {
+  margin: 0 1rem;
 }
