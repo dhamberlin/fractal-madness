@@ -76,8 +76,6 @@ img {
   position: absolute;
   right: 0;
   bottom: 0;
-  /* width: 6rem; */
-  /* height: 9rem; */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -98,7 +96,8 @@ img {
 .ui-wrap button {
   opacity: .5;
 }
-.ui-wrap button:hover {
+.ui-wrap button:hover,
+.ui-wrap button:active {
   opacity: 1;
   cursor: pointer;
 }

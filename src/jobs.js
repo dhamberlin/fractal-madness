@@ -37,21 +37,18 @@ jobMaker = {
   },
 }
 
-let iterator
+let iterator // store iterator for current job
+let VS // store light version of viewSettings obj for faster serialization
 
-let pixelCache = {
-  last: {},
-  current: {}
-}
 function startJob() {
   if (running) stopJob()
-  pixelCache.last = pixelCache.current
-  pixelCache.current = {}
   jobNum++
   renderStart = performance.now()
 
   let { width, height } = canvas
   iterator = spiralMaker(width, height)
+  const { panX, panY, iterations, magnification } = viewSettings
+  VS = { panX, panY, iterations, magnification }
 
   for (let i in workers) {
     const job = makeJob()
@@ -91,8 +88,6 @@ function finishJob(msg) {
     newJob.workerId = workerId
     workers[workerId].postMessage(newJob)
   } else {
-    // renderStart = performance.now()
-    // ctx.drawImage(hiddenCanvas, 0, 0)
     isRendering = false
     renderFinish = performance.now()
     renderTimeDisplay.innerHTML = `renderTime: ${renderFinish - renderStart}`
@@ -145,7 +140,7 @@ function makeJob() {
     pixels,
     width,
     height,
-    viewSettings
+    viewSettings: VS
   }
 
 }

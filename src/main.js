@@ -187,8 +187,8 @@ function stopPropagationAndPreventDefault(e) {
 
 function handleResize() {
   console.log('resize')
-  width = window.innerWidth
-  height = window.innerHeight
+  width = window.innerWidth * viewSettings.resolution
+  height = window.innerHeight * viewSettings.resolution
   canvas.width = width
   canvas.height = height
   ctx.translate(width / 2, height / 2)
