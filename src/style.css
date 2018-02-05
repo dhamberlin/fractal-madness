@@ -172,11 +172,12 @@ button:hover {
 }
 .settings-panel {
   position: absolute;
-  width: 70%;
-  height: 70%;
+  width: 80%;
+  height: 80%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow: scroll;
 }
 
 .horizontal-wrap {
@@ -198,32 +199,37 @@ button:hover {
 
 .color-select {
   margin-bottom: 1rem;
+  min-height: 2.5rem;
+  width: 100%;
+  color: #111;
 }
 
 #settingsForm {
   display: flex;
   flex-direction: column;
   font-size: 1.5rem;
-  min-width: 20rem;
+  min-width: 60%;
+  min-height: 10rem;
   text-align: center;
-  overflow: scroll;
 }
 
 #settingsForm .horizontal-wrap {
-  min-height: 4rem;
+  min-height: 3rem;
   margin: .5rem;
 }
 
 
 #settingsForm input {
   min-height: 2rem;
+  color: #111;
 }
 
 #setSettings {
   padding: .5rem 1.5rem;
   font-size: 1.5rem;
+  min-height: 3rem;
   background-color: #aaa;
-  color: #333;
+  color: #111;
   border: .15rem #eee solid;
 }
 
