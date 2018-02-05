@@ -103,11 +103,11 @@ img {
 }
 
 .zoom-in {
-  background-image: url("/src/icons/plus.svg");
+  background-image: url("/fractal-madness/src/icons/plus.svg");
 }
 
 .zoom-out {
-  background-image: url("/src/icons/minus.svg")
+  background-image: url("/fractal-madness/src/icons/minus.svg")
 }
 
 .ui-pan {
@@ -122,7 +122,7 @@ img {
   position: absolute;
   width: 3rem;
   height: 3rem;
-  background-image: url("/src/icons/angle.svg");
+  background-image: url("/fractal-madness/src/icons/angle.svg");
   background-position: center;
   background-size: 100%;
 }
@@ -156,7 +156,7 @@ img {
   right: 1rem;
   width: 3.5rem;
   height: 3.5rem;
-  background-image: url("/src/icons/gear.svg");
+  background-image: url("/fractal-madness/src/icons/gear.svg");
   background-position: center;
   background-size: 100%;
   z-index: 2;
