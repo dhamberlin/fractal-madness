@@ -7,7 +7,7 @@ let jobsFinished
 
 function spawnWorkers() {
   for (let i = 0; i < workerCount; i++) {
-    workers[i] = new Worker('src/mandelbrotWorker.js')
+    workers[i] = new Worker('/src/mandelbrotWorker.js')
     workers[i].onmessage = finishJob
     console.log(`Worker ${i} spawned`)
   }
