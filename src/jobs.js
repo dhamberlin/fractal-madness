@@ -1,3 +1,6 @@
+const BATCH_SIZE = 10
+
+
 function spawnWorkers() {
   for (let i = 0; i < workerCount; i++) {
     workers[i] = new Worker('mandelbrotWorker.js')
@@ -36,7 +39,7 @@ function startJob() {
   if (running) stopJob()
   jobNum++
   renderStart = performance.now()
-  
+
   let { width, height } = canvas
   iterator = spiralMaker(width, height)
 
@@ -98,7 +101,7 @@ function* spiralMaker(w, h) {
       maxI = Math.max(w*w, h*h)
 
   for(let i = 0; i < maxI; i++) {
-    
+
     if (-w/2 <= x
         && x < w/2
         && -h/2 < y
@@ -124,7 +127,7 @@ function* spiralMaker(w, h) {
 function makeJob() {
   const pixels = []
 
-  for (let i = 0; i < 600; i++) {
+  for (let i = 0; i < BATCH_SIZE; i++) {
     const pixel = iterator.next().value
     if (pixel) {
       pixels.push(pixel)

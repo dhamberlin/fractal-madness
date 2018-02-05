@@ -1,8 +1,8 @@
-const width = window.innerWidth * 2;
-const height = window.innerHeight * 2;
+let width = window.innerWidth * 2;
+let height = window.innerHeight * 2;
 // const width = 600 * 3 // window.innerWidth;
 // const height = 480 * 2 // window.innerHeight;
-const workerCount = 8
+const workerCount = 3
 
 let workers = []
 let running = false
@@ -16,11 +16,11 @@ let isRendering = false
 
 let viewSettings = {
   panSpeed: 30,
-  zoomFactor: .1,
-  magnification: 450,
-  panX: 0,
+  zoomFactor: .2,
+  magnification: width / 4, //450,
+  panX: .5,
   panY: 0,
-  iterations: 200
+  iterations: 60
 }
 
 let shouldRender = false;
@@ -48,16 +48,45 @@ function draw() {
   magnificationInput.value = magnification;
 }
 
-function zoomIn() {
+function zoomIn(e) {
+  e.stopPropagation()
   viewSettings.magnification *= (1 + viewSettings.zoomFactor);
-  // draw();
+  draw();
 }
 
-function zoomOut() {
+function zoomOut(e) {
+  e.stopPropagation()
   viewSettings.magnification *= (1 - viewSettings.zoomFactor);
-  // draw();
+  draw();
 }
 
+function panLeft (e) {
+  e.stopPropagation()
+  e.preventDefault()
+  viewSettings.panX += viewSettings.panSpeed / viewSettings.magnification
+  draw()
+}
+
+function panRight (e) {
+  e.stopPropagation()
+  e.preventDefault()
+  viewSettings.panX -= viewSettings.panSpeed / viewSettings.magnification
+  draw()
+}
+
+function panUp (e) {
+  e.stopPropagation()
+  e.preventDefault()
+  viewSettings.panY += viewSettings.panSpeed / viewSettings.magnification
+  draw()
+}
+
+function panDown (e) {
+  e.stopPropagation()
+  e.preventDefault()
+  viewSettings.panY -= viewSettings.panSpeed / viewSettings.magnification
+  draw()
+}
 
 let keyDownTimeout = false
 function handleKeyDown(e) {
@@ -113,6 +142,8 @@ function setSettings(e) {
   // e.preventDefault()
   viewSettings.iterations = iterationInput.value
   draw()
+  canvas.webkitRequestFullscreen()
+
 }
 
 function saveView() {
@@ -144,6 +175,16 @@ function handleAnimateClick() {
   document.getElementById('canvas').classList.toggle('animate2')
 }
 
+function handleResize() {
+  console.log('resize')
+  width = window.innerWidth * 2
+  height = window.innerHeight * 2
+  canvas.width = width
+  canvas.height = height
+  ctx.translate(width / 2, height / 2)
+  draw()
+}
+
 // setDPI(canvas, 96 * 4)
 spawnWorkers()
 draw()
@@ -155,3 +196,11 @@ document.getElementById('animate-button').addEventListener('click', handleAnimat
 document.getElementById('save-view').addEventListener('click', saveView)
 document.getElementById('load-view').addEventListener('click', loadView)
 document.getElementById('capture-view').addEventListener('click', captureView)
+
+document.querySelector('.zoom-in').addEventListener('click', zoomIn)
+document.querySelector('.zoom-out').addEventListener('click', zoomOut)
+document.querySelector('.pan-left').addEventListener('click', panLeft)
+document.querySelector('.pan-right').addEventListener('click', panRight)
+document.querySelector('.pan-up').addEventListener('click', panUp)
+document.querySelector('.pan-down').addEventListener('click', panDown)
+window.addEventListener('resize', handleResize)
