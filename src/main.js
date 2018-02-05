@@ -1,5 +1,5 @@
-let width = window.innerWidth * 2;
-let height = window.innerHeight * 2;
+let width = window.innerWidth;
+let height = window.innerHeight;
 // const width = 600 * 3 // window.innerWidth;
 // const height = 480 * 2 // window.innerHeight;
 const workerCount = 3
@@ -166,8 +166,6 @@ function loadView() {
 
 function captureView() {
   const img = document.createElement('img')
-  // img.width = width /4
-  // img.height = height /4
   imgsrc = canvas.toDataURL()
   img.style.width = width
   img.style.height = height
@@ -189,8 +187,8 @@ function stopPropagationAndPreventDefault(e) {
 
 function handleResize() {
   console.log('resize')
-  width = window.innerWidth * 2
-  height = window.innerHeight * 2
+  width = window.innerWidth
+  height = window.innerHeight
   canvas.width = width
   canvas.height = height
   ctx.translate(width / 2, height / 2)
