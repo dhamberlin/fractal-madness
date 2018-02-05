@@ -37,8 +37,8 @@ body {
   background-color: #333;
   color: #ddd;
   box-sizing: border-box;
-  width: 200vw;
-  height: 200vh;
+  height: 1000vh;
+  touch-action: none;
 }
 
 canvas {
@@ -105,6 +105,7 @@ img {
   left: 0;
   width: 100%;
   height: 100%;
+  touch-action: none;
 }
 
 .ui-zoom {
@@ -178,7 +179,84 @@ img {
   left: 3rem;
 }
 
-button:active
-{
-  background-color: white;
+.settings-icon {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  background-image: url("/icons/gear.svg");
+  background-position: center;
+  background-size: 100%;
+  z-index: 2;
+}
+
+.settings-overlay {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, .8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.settings-panel {
+  position: absolute;
+  width: 70%;
+  height: 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.horizontal-wrap {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.iteration-button {
+  width: 1.5rem;
+  height: 1.5rem;
+  background-position: center;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  /* border: .1rem #999 solid; */
+  border-radius: 50%;
+  margin: .2rem;
+}
+
+#settingsForm {
+  display: flex;
+  flex-direction: column;
+  font-size: 1.5rem;
+  min-width: 20rem;
+  text-align: center;
+}
+
+#settingForm .horizontal-wrap {
+  min-height: 4rem;
+}
+
+#settingsForm input {
+  min-height: 2rem;
+}
+
+#setSettings {
+  padding: .5rem 1.5rem;
+  font-size: 1.5rem;
+  margin: 1rem;
+  background-color: #aaa;
+  color: #333;
+  border: .15rem #eee solid;
+}
+
+.is-hidden {
+  visibility: hidden;
+}
+
+input {
+  width: 3rem;
 }

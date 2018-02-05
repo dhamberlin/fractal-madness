@@ -1,4 +1,8 @@
-const BATCH_SIZE = 10
+const BATCH_SIZE = 100
+
+let jobNum = 0
+let jobs = []
+let jobsFinished
 
 
 function spawnWorkers() {
@@ -35,19 +39,21 @@ jobMaker = {
 
 let iterator
 
+let pixelCache = {
+  last: {},
+  current: {}
+}
 function startJob() {
   if (running) stopJob()
+  pixelCache.last = pixelCache.current
+  pixelCache.current = {}
   jobNum++
   renderStart = performance.now()
 
   let { width, height } = canvas
   iterator = spiralMaker(width, height)
 
-  // jobMaker.spiral()
-  console.log('Time to spiral: ', performance.now() - renderStart)
-
   for (let i in workers) {
-    // const job = jobs.pop()
     const job = makeJob()
     job.workerId = i
     workers[i].postMessage(job)

@@ -6,9 +6,6 @@ const workerCount = 3
 
 let workers = []
 let running = false
-let jobNum = 0
-let jobs = []
-let jobsFinished
 
 let isRendering = false
 
@@ -49,12 +46,14 @@ function draw() {
 }
 
 function zoomIn(e) {
+  e.preventDefault()
   e.stopPropagation()
   viewSettings.magnification *= (1 + viewSettings.zoomFactor);
   draw();
 }
 
 function zoomOut(e) {
+  e.preventDefault()
   e.stopPropagation()
   viewSettings.magnification *= (1 - viewSettings.zoomFactor);
   draw();
@@ -90,6 +89,12 @@ function panDown (e) {
 
 let keyDownTimeout = false
 function handleKeyDown(e) {
+  if (isSettingsPanelOpen) {
+    if (e.key === 'Escape') {
+      toggleSettingsPanel()
+    }
+    return
+  }
   const { magnification, zoomFactor, panSpeed } = viewSettings
   // console.log(e.key)
   switch (e.key) {
@@ -139,11 +144,9 @@ function handleKeyDown(e) {
 }
 
 function setSettings(e) {
-  // e.preventDefault()
   viewSettings.iterations = iterationInput.value
   draw()
-  canvas.webkitRequestFullscreen()
-
+  toggleSettingsPanel()
 }
 
 function saveView() {
@@ -175,6 +178,13 @@ function handleAnimateClick() {
   document.getElementById('canvas').classList.toggle('animate2')
 }
 
+function stopPropagationAndPreventDefault(e) {
+  if (e) {
+    e.stopPropagation()
+    e.preventDefault()
+  }
+}
+
 function handleResize() {
   console.log('resize')
   width = window.innerWidth * 2
@@ -185,22 +195,64 @@ function handleResize() {
   draw()
 }
 
+function toggleUI() {
+  const uiWrap = document.querySelector('.ui-wrap')
+  if (uiWrap.classList && uiWrap.classList.toggle) {
+    uiWrap.classList.toggle('is-hidden')
+  } else {
+    alert('fail')
+  }
+}
+
+let isSettingsPanelOpen = false
+function toggleSettingsPanel (e) {
+  if (e) {
+    e.stopPropagation()
+    e.preventDefault()
+  }
+  document.querySelector('.settings-overlay').classList.toggle('is-hidden')
+  isSettingsPanelOpen = !isSettingsPanelOpen
+}
+
+function decreaseIterations(e) {
+  console.log('sup')
+  stopPropagationAndPreventDefault(e)
+  iterationInput.value = Math.floor(iterationInput.value * 0.8)
+}
+
+function increaseIterations(e) {
+  stopPropagationAndPreventDefault(e)
+  iterationInput.value = Math.floor(iterationInput.value * 1.2)
+}
+
 // setDPI(canvas, 96 * 4)
 spawnWorkers()
 draw()
 
-window.addEventListener('keydown', handleKeyDown)
-document.getElementById('settingsForm').addEventListener('submit', setSettings);
 
+// Settings listeners
+document.getElementById('settingsForm').addEventListener('submit', setSettings);
 document.getElementById('animate-button').addEventListener('click', handleAnimateClick)
 document.getElementById('save-view').addEventListener('click', saveView)
 document.getElementById('load-view').addEventListener('click', loadView)
 document.getElementById('capture-view').addEventListener('click', captureView)
+const settingsIcons = document.getElementsByClassName('settings-icon')
+Array.from(settingsIcons).forEach(el => el.addEventListener('click', toggleSettingsPanel))
+document.querySelector('.decrease-iterations').addEventListener('click', decreaseIterations)
+document.querySelector('.increase-iterations').addEventListener('click', increaseIterations)
 
+
+// navigation listeners
+window.addEventListener('keydown', handleKeyDown)
 document.querySelector('.zoom-in').addEventListener('click', zoomIn)
 document.querySelector('.zoom-out').addEventListener('click', zoomOut)
 document.querySelector('.pan-left').addEventListener('click', panLeft)
 document.querySelector('.pan-right').addEventListener('click', panRight)
 document.querySelector('.pan-up').addEventListener('click', panUp)
 document.querySelector('.pan-down').addEventListener('click', panDown)
+document.getElementById('canvas-wrapper').addEventListener('click', toggleUI)
 window.addEventListener('resize', handleResize)
+
+// disable double-tab zoom on ui icons
+document.querySelector('.ui-zoom').addEventListener('click', stopPropagationAndPreventDefault)
+document.querySelector('.ui-pan').addEventListener('click', stopPropagationAndPreventDefault)
