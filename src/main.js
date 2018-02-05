@@ -168,7 +168,7 @@ function captureView() {
   const img = document.createElement('img')
   // img.width = width /4
   // img.height = height /4
-  img.src = canvas.toDataURL()
+  imgsrc = canvas.toDataURL()
   img.style.width = width
   img.style.height = height
   document.body.appendChild(img)
