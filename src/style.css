@@ -181,6 +181,7 @@ button:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow: scroll;
 }
 
 .horizontal-wrap {
