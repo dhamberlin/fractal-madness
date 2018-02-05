@@ -15,10 +15,6 @@ canvas {
   max-height: 100%;
 }
 
-.legacy-ui {
-  display: none;
-}
-
 span {
   color: "#bbb"
 }
@@ -104,11 +100,11 @@ button:hover {
 }
 
 .zoom-in {
-  background-image: url("/fractal-madness/src/icons/plus.svg");
+  background-image: url("/src/icons/plus.svg");
 }
 
 .zoom-out {
-  background-image: url("/fractal-madness/src/icons/minus.svg")
+  background-image: url("/src/icons/minus.svg")
 }
 
 .ui-pan {
@@ -123,7 +119,7 @@ button:hover {
   position: absolute;
   width: 3rem;
   height: 3rem;
-  background-image: url("/fractal-madness/src/icons/angle.svg");
+  background-image: url("/src/icons/angle.svg");
   background-position: center;
   background-size: 100%;
 }
@@ -157,7 +153,7 @@ button:hover {
   right: 1rem;
   width: 3.5rem;
   height: 3.5rem;
-  background-image: url("/fractal-madness/src/icons/gear.svg");
+  background-image: url("/src/icons/gear.svg");
   background-position: center;
   background-size: 100%;
   z-index: 2;
@@ -176,8 +172,8 @@ button:hover {
 }
 .settings-panel {
   position: absolute;
-  width: 70%;
-  height: 70%;
+  width: 80%;
+  height: 80%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -203,31 +199,37 @@ button:hover {
 
 .color-select {
   margin-bottom: 1rem;
+  min-height: 2.5rem;
+  width: 100%;
+  color: #111;
 }
 
 #settingsForm {
   display: flex;
   flex-direction: column;
   font-size: 1.5rem;
-  min-width: 20rem;
+  min-width: 60%;
+  min-height: 10rem;
   text-align: center;
 }
 
 #settingsForm .horizontal-wrap {
-  min-height: 4rem;
-  margin: 1rem;
+  min-height: 3rem;
+  margin: .5rem;
 }
 
 
 #settingsForm input {
   min-height: 2rem;
+  color: #111;
 }
 
 #setSettings {
   padding: .5rem 1.5rem;
   font-size: 1.5rem;
+  min-height: 3rem;
   background-color: #aaa;
-  color: #333;
+  color: #111;
   border: .15rem #eee solid;
 }
 
