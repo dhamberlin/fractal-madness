@@ -7,7 +7,7 @@ let jobsFinished
 
 function spawnWorkers() {
   for (let i = 0; i < workerCount; i++) {
-    workers[i] = new Worker('/fractal-madness/src/mandelbrotWorker.js')
+    workers[i] = new Worker('/src/mandelbrotWorker.js')
     workers[i].onmessage = finishJob
     console.log(`Worker ${i} spawned`)
   }
@@ -81,7 +81,7 @@ function finishJob(msg) {
   for (let i in counts) {
     const { x, y, count } = counts[i]
     ctx.fill()
-    ctx.fillStyle = fills.blue(count)
+    ctx.fillStyle = fills[viewSettings.color](count)
     ctx.fillRect(x, y, 1, 1)
   }
 

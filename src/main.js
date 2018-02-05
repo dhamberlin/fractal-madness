@@ -17,7 +17,8 @@ let viewSettings = {
   magnification: width / 4, //450,
   panX: .5,
   panY: 0,
-  iterations: 60
+  iterations: 60,
+  color: 'red'
 }
 
 let shouldRender = false;
@@ -145,6 +146,7 @@ function handleKeyDown(e) {
 
 function setSettings(e) {
   viewSettings.iterations = iterationInput.value
+  viewSettings.color = document.querySelector('.color-select').value
   draw()
   toggleSettingsPanel()
 }

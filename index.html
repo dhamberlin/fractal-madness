@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Fractal Madness</title>
+    <link rel="stylesheet" href="src/reset.css">
     <link rel="stylesheet" href="src/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   </head>
@@ -33,13 +34,22 @@
     <div class="settings-overlay is-hidden">
       <button class="settings-icon"></button>
       <div class="settings-panel">
+
         <form id="settingsForm" onsubmit="return false">
+
           <label for="iterations">Max Iterations</label>
           <div class="horizontal-wrap">
             <button class="iteration-button decrease-iterations zoom-out"></button>
             <input id="iterations" type="number" pattern="[0-9]*"></input>
             <button class="iteration-button increase-iterations zoom-in"></button>
           </div>
+
+          <select class='color-select'>
+            <option value="red">Red</option>
+            <option value="blue">Blue</option>
+            <option value="green">Green</option>
+          </select>
+
           <button id="setSettings" action="setSettings">Set</button>
         </form>
       </div>
