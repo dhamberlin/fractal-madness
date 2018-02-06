@@ -146,16 +146,20 @@ function handleKeyDown(e) {
 }
 
 function setSettings(e) {
+
+  viewSettings.iterations = iterationInput.value
+  viewSettings.color = document.querySelector('.color-select').value
+
+  toggleSettingsPanel()
   const oldRes = viewSettings.resolutionFactor
   const newRes = document.getElementById('resolutionInput').checked ? 2 : 1
   if (oldRes !== newRes) {
     viewSettings.magnification *= newRes / oldRes
+    viewSettings.resolutionFactor = newRes
+    handleResize()
+  } else {
+    draw()
   }
-  viewSettings.resolutionFactor = newRes
-  viewSettings.iterations = iterationInput.value
-  viewSettings.color = document.querySelector('.color-select').value
-  handleResize()
-  toggleSettingsPanel()
 }
 
 function saveView() {
@@ -193,6 +197,12 @@ function stopPropagationAndPreventDefault(e) {
 }
 
 function handleResize() {
+  // document.getElementById('setSettings').innerHTML = ([
+  //   `window.innerHeight: ${window.innerHeight}`,
+  //   'screen.height: ' + screen.height,
+  //   'screen.width: ' + screen.width,
+  //   'window.outerHeight: ' + window.outerHeight
+  // ].join('<br>'))
   const { resolutionFactor } = viewSettings
   width = window.innerWidth * resolutionFactor
   height = window.innerHeight * resolutionFactor
@@ -202,12 +212,18 @@ function handleResize() {
   draw()
 }
 
+function getHeight() {
+  // TODO get innerHeight for desktop, screen height for mobile
+}
+
+const icons = Array.from(document.querySelectorAll('.ui-wrap .icon'))
 function toggleUI() {
-  const uiWrap = document.querySelector('.ui-wrap')
-  if (uiWrap.classList && uiWrap.classList.toggle) {
-    uiWrap.classList.toggle('is-hidden')
+  console.log(icons)
+  console.log(icons[0].classList)
+  if (icons[0].classList.contains('fade-in')) {
+    icons.forEach(i => i.classList.replace('fade-in', 'fade-out'))
   } else {
-    alert('fail')
+    icons.forEach(i => i.classList.replace('fade-out', 'fade-in'))
   }
 }
 
@@ -217,12 +233,15 @@ function toggleSettingsPanel (e) {
     e.stopPropagation()
     e.preventDefault()
   }
-  document.querySelector('.settings-overlay').classList.toggle('is-hidden')
+  if (isSettingsPanelOpen) {
+    document.querySelector('.settings-overlay').classList.replace('fade-in', 'fade-out')
+  } else {
+    document.querySelector('.settings-overlay').classList.replace('fade-out', 'fade-in')
+  }
   isSettingsPanelOpen = !isSettingsPanelOpen
 }
 
 function decreaseIterations(e) {
-  console.log('sup')
   stopPropagationAndPreventDefault(e)
   iterationInput.value = Math.floor(iterationInput.value * 0.8)
 }
@@ -239,10 +258,10 @@ draw()
 
 // Settings listeners
 document.getElementById('settingsForm').addEventListener('submit', setSettings);
-document.getElementById('animate-button').addEventListener('click', handleAnimateClick)
-document.getElementById('save-view').addEventListener('click', saveView)
-document.getElementById('load-view').addEventListener('click', loadView)
-document.getElementById('capture-view').addEventListener('click', captureView)
+// document.getElementById('animate-button').addEventListener('click', handleAnimateClick)
+// document.getElementById('save-view').addEventListener('click', saveView)
+// document.getElementById('load-view').addEventListener('click', loadView)
+// document.getElementById('capture-view').addEventListener('click', captureView)
 const settingsIcons = document.getElementsByClassName('settings-icon')
 Array.from(settingsIcons).forEach(el => el.addEventListener('click', toggleSettingsPanel))
 document.querySelector('.decrease-iterations').addEventListener('click', decreaseIterations)

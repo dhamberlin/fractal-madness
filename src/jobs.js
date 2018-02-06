@@ -42,6 +42,7 @@ let VS // store light version of viewSettings obj for faster serialization
 
 function startJob() {
   if (running) stopJob()
+  running = true
   jobNum++
   renderStart = performance.now()
 
@@ -58,7 +59,6 @@ function startJob() {
 }
 
 function stopJob() {
-  console.log('NO BRAKES!')
   jobs = []
 }
 

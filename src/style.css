@@ -93,12 +93,40 @@ img {
   border-radius: 50%;
 }
 
-.ui-wrap button {
-  opacity: .5;
+/* .ui-wrap .icon {
+  opacity: .3;
+} */
+
+.icon.fade-out {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s .3s, opacity .3s ease-in;
 }
-.ui-wrap button:hover,
-.ui-wrap button:active {
+.icon.fade-in {
+  visibility: visible;
+  opacity: .5;
+  transition: opacity .3s ease-out;
+}
+
+.settings-overlay.fade-out {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s .3s, opacity .3s ease;
+}
+.settings-overlay.fade-in {
+  visibility: visible;
   opacity: 1;
+  transition: opacity .3s ease;
+}
+
+.icon,
+button,
+input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.ui-wrap div.icon:hover {
+  opacity: 1 !important;
   cursor: pointer;
 }
 
@@ -172,6 +200,7 @@ img {
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
 }
 .settings-panel {
   position: absolute;

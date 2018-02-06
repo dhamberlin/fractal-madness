@@ -14,25 +14,25 @@
       <div id='canvas'></div>
 
       <div class="ui-wrap">
-        <button class="icon settings-icon"></button>
+        <div class="icon settings-icon fade-in"></div>
 
         <div class="ui-zoom">
-          <button class="icon zoom-icon zoom-in"></button>
-          <button class="icon zoom-icon zoom-out"></button>
+          <div class="icon zoom-icon zoom-in fade-in"></div>
+          <div class="icon zoom-icon zoom-out fade-in"></div>
         </div>
 
         <div class="ui-pan">
-          <button class="icon pan-icon pan-up"></button>
-          <button class="icon pan-icon pan-left"></button>
-          <button class="icon pan-icon pan-right"></button>
-          <button class="icon pan-icon pan-down"></button>
+          <div class="icon pan-icon pan-up fade-in"></div>
+          <div class="icon pan-icon pan-left fade-in"></div>
+          <div class="icon pan-icon pan-right fade-in"></div>
+          <div class="icon pan-icon pan-down fade-in"></div>
         </div>
       </div>
 
     </div>
 
-    <div class="settings-overlay is-hidden">
-      <button class="icon settings-icon"></button>
+    <div class="settings-overlay fade-out">
+      <div class="icon settings-icon"></div>
       <div class="settings-panel">
 
         <form id="settingsForm" onsubmit="return false">
@@ -52,7 +52,7 @@
 
           <div class="horizontal-wrap"
             <label class="switch">
-              <span>High Definition</span>
+              <lable for="resolutionInput">High Definition</lable>
               <input id="resolutionInput" type="checkbox">
               <span class="slider"></span>
             </label>
