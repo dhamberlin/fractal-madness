@@ -65,8 +65,6 @@ function checkJob(job) {
 
   for (let i in pixels) {
     const { x, y } = pixels[i]
-    // const currentX = ((x - width / 2) / magnification) - panX
-    // const currentY = ((y - height / 2) / magnification) - panY
     const currentX = (x / magnification) - panX
     const currentY = (y / magnification) - panY
     const count = checkPixel(currentX, currentY, iterations)
@@ -76,25 +74,14 @@ function checkJob(job) {
 }
 
 onmessage = (msg) => {
-  //  const {
-  //    row,
-  //    width,
-  //    height,
-  //    viewSettings,
-  //    workerId,
-  //    jobNum
-  //  } = msg.data;
-
   const job = msg.data
   const { workerId, jobNum } = job
 
-  //  counts = checkRow(row, width, height, viewSettings);
   const counts = checkJob(job)
 
    postMessage({
       workerId,
       jobNum,
-      // row,
       counts
    });
 }

@@ -48,100 +48,76 @@ function draw() {
 }
 
 function zoomIn(e) {
-  e.preventDefault()
-  e.stopPropagation()
+  stopPropagationAndPreventDefault(e)
   viewSettings.magnification *= (1 + viewSettings.zoomFactor);
   draw();
 }
 
 function zoomOut(e) {
-  e.preventDefault()
-  e.stopPropagation()
+  stopPropagationAndPreventDefault(e)
   viewSettings.magnification *= (1 - viewSettings.zoomFactor);
   draw();
 }
 
 function panLeft (e) {
-  e.stopPropagation()
-  e.preventDefault()
+  stopPropagationAndPreventDefault(e)
   viewSettings.panX += viewSettings.panSpeed / viewSettings.magnification
   draw()
 }
 
 function panRight (e) {
-  e.stopPropagation()
-  e.preventDefault()
+  stopPropagationAndPreventDefault(e)
   viewSettings.panX -= viewSettings.panSpeed / viewSettings.magnification
   draw()
 }
 
 function panUp (e) {
-  e.stopPropagation()
-  e.preventDefault()
+  stopPropagationAndPreventDefault(e)
   viewSettings.panY += viewSettings.panSpeed / viewSettings.magnification
   draw()
 }
 
 function panDown (e) {
-  e.stopPropagation()
-  e.preventDefault()
+  stopPropagationAndPreventDefault(e)
   viewSettings.panY -= viewSettings.panSpeed / viewSettings.magnification
   draw()
 }
 
-let keyDownTimeout = false
 function handleKeyDown(e) {
-  if (isSettingsPanelOpen) {
-    if (e.key === 'Escape') {
-      toggleSettingsPanel()
-    }
+  if (e.key === 'Escape') {
+    UI.toggleSettingsPanel()
+  }
+  if (UI.state.isSettingsPanelOpen) {
     return
   }
   const { magnification, zoomFactor, panSpeed } = viewSettings
-  // console.log(e.key)
   switch (e.key) {
     case 'ArrowRight':
     case 'd':
-      viewSettings.panX -= panSpeed / magnification;
-      shouldRender = true
+      panRight(e)
       break;
     case 'ArrowLeft':
     case 'a':
-      viewSettings.panX += panSpeed / magnification;
-      shouldRender = true
+      panLeft()
       break;
     case 'ArrowUp':
     case 'w':
-      viewSettings.panY += panSpeed / magnification;
-      shouldRender = true
+      panUp()
       break;
     case 'ArrowDown':
     case 's':
-      viewSettings.panY -= panSpeed / magnification;
-      shouldRender = true
+      panDown()
       break;
     case ',':
     case '-':
-      viewSettings.magnification = magnification * (1 - zoomFactor);
-      shouldRender = true
+      zoomOut()
       break;
     case '.':
     case '=':
-      viewSettings.magnification = magnification * (1 + zoomFactor);
-      shouldRender = true
+      zoomIn()
       break;
     default:
       break;
-  }
-
-  if (keyDownTimeout) return
-  if (shouldRender) {
-    keyDownTimeout = true
-    shouldRender = false
-    draw()
-    setTimeout(() => {
-      keyDownTimeout = false
-    }, 100)
   }
 }
 
@@ -150,7 +126,7 @@ function setSettings(e) {
   viewSettings.iterations = iterationInput.value
   viewSettings.color = document.querySelector('.color-select').value
 
-  toggleSettingsPanel()
+  UI.toggleSettingsPanel()
   const oldRes = viewSettings.resolutionFactor
   const newRes = document.getElementById('resolutionInput').checked ? 2 : 1
   if (oldRes !== newRes) {
@@ -204,30 +180,19 @@ function handleResize() {
   //   'window.outerHeight: ' + window.outerHeight
   // ].join('<br>'))
   const { resolutionFactor } = viewSettings
-  width = window.innerWidth * resolutionFactor
-  height = window.innerHeight * resolutionFactor
-  canvas.width = width
-  canvas.height = height
-  ctx.translate(width / 2, height / 2)
-  draw()
+  const heightDiff = window.innerHeight - (height / resolutionFactor)
+  if (heightDiff > 0 || heightDiff < -100) {
+    width = window.innerWidth * resolutionFactor
+    height = window.innerHeight * resolutionFactor
+    canvas.width = width
+    canvas.height = height
+    ctx.translate(width / 2, height / 2)
+    draw()
+  }
 }
 
 function getHeight() {
   // TODO get innerHeight for desktop, screen height for mobile
-}
-
-let isSettingsPanelOpen = false
-function toggleSettingsPanel (e) {
-  if (e) {
-    e.stopPropagation()
-    e.preventDefault()
-  }
-  if (isSettingsPanelOpen) {
-    document.querySelector('.settings-overlay').classList.replace('fade-in', 'fade-out')
-  } else {
-    document.querySelector('.settings-overlay').classList.replace('fade-out', 'fade-in')
-  }
-  isSettingsPanelOpen = !isSettingsPanelOpen
 }
 
 function decreaseIterations(e) {
@@ -240,33 +205,6 @@ function increaseIterations(e) {
   iterationInput.value = Math.floor(iterationInput.value * 1.2)
 }
 
+UI.init()
 spawnWorkers()
 draw()
-
-
-// Settings listeners
-document.getElementById('settingsForm').addEventListener('submit', setSettings);
-// document.getElementById('animate-button').addEventListener('click', handleAnimateClick)
-// document.getElementById('save-view').addEventListener('click', saveView)
-// document.getElementById('load-view').addEventListener('click', loadView)
-// document.getElementById('capture-view').addEventListener('click', captureView)
-const settingsIcons = document.getElementsByClassName('settings-icon')
-Array.from(settingsIcons).forEach(el => el.addEventListener('click', toggleSettingsPanel))
-document.querySelector('.decrease-iterations').addEventListener('click', decreaseIterations)
-document.querySelector('.increase-iterations').addEventListener('click', increaseIterations)
-
-
-// navigation listeners
-window.addEventListener('keydown', handleKeyDown)
-document.querySelector('.zoom-in').addEventListener('click', zoomIn)
-document.querySelector('.zoom-out').addEventListener('click', zoomOut)
-document.querySelector('.pan-left').addEventListener('click', panLeft)
-document.querySelector('.pan-right').addEventListener('click', panRight)
-document.querySelector('.pan-up').addEventListener('click', panUp)
-document.querySelector('.pan-down').addEventListener('click', panDown)
-document.getElementById('canvas-wrapper').addEventListener('click', utils.toggleUI)
-window.addEventListener('resize', handleResize)
-
-// disable double-tab zoom on ui icons
-document.querySelector('.ui-zoom').addEventListener('click', stopPropagationAndPreventDefault)
-document.querySelector('.ui-pan').addEventListener('click', stopPropagationAndPreventDefault)

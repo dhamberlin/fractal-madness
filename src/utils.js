@@ -1,23 +1,31 @@
 const utils = {
-  setDPI: (canvas, dpi) => {
-    // Set up CSS size.
-    canvas.style.width = canvas.style.width || canvas.width + 'px';
-    canvas.style.height = canvas.style.height || canvas.height + 'px';
+  addListeners() {
+    // Settings listeners
+    document.getElementById('settingsForm').addEventListener('submit', setSettings);
+    // document.getElementById('animate-button').addEventListener('click', handleAnimateClick)
+    // document.getElementById('save-view').addEventListener('click', saveView)
+    // document.getElementById('load-view').addEventListener('click', loadView)
+    // document.getElementById('capture-view').addEventListener('click', captureView)
+    const settingsIcons = document.getElementsByClassName('settings-icon')
+    Array.from(settingsIcons).forEach(el => el.addEventListener('click', UI.toggleSettingsPanel.bind(UI)))
+    document.querySelector('.decrease-iterations').addEventListener('click', decreaseIterations)
+    document.querySelector('.increase-iterations').addEventListener('click', increaseIterations)
 
-    // Resize canvas and scale future draws.
-    var scaleFactor = dpi / 96;
-    canvas.width = Math.ceil(canvas.width * scaleFactor);
-    canvas.height = Math.ceil(canvas.height * scaleFactor);
-    var ctx = canvas.getContext('2d');
-    ctx.scale(scaleFactor, scaleFactor);
-  },
 
-  toggleUI: () => {
-    const icons = Array.from(document.querySelectorAll('.ui-wrap .icon'))
-    if (icons[0].classList.contains('fade-in')) {
-      icons.forEach(i => i.classList.replace('fade-in', 'fade-out'))
-    } else {
-      icons.forEach(i => i.classList.replace('fade-out', 'fade-in'))
-    }
+
+    // navigation listeners
+    window.addEventListener('keydown', handleKeyDown)
+    document.querySelector('.zoom-in').addEventListener('click', zoomIn)
+    document.querySelector('.zoom-out').addEventListener('click', zoomOut)
+    document.querySelector('.pan-left').addEventListener('click', panLeft)
+    document.querySelector('.pan-right').addEventListener('click', panRight)
+    document.querySelector('.pan-up').addEventListener('click', panUp)
+    document.querySelector('.pan-down').addEventListener('click', panDown)
+    document.getElementById('canvas-wrapper').addEventListener('click', UI.toggleUI)
+    window.addEventListener('resize', handleResize)
+
+    // disable double-tab zoom on ui icons
+    document.querySelector('.ui-zoom').addEventListener('click', stopPropagationAndPreventDefault)
+    document.querySelector('.ui-pan').addEventListener('click', stopPropagationAndPreventDefault)
   }
 }
