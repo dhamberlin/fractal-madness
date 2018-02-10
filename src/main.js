@@ -240,7 +240,6 @@ function increaseIterations(e) {
   iterationInput.value = Math.floor(iterationInput.value * 1.2)
 }
 
-// setDPI(canvas, 96 * 4)
 spawnWorkers()
 draw()
 
