@@ -7,29 +7,26 @@
     <link rel="stylesheet" href="src/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   </head>
-  <body oncontextmenu="return false;">
+  <body>
 
     <div id="canvas-wrapper">
-
-      <div id='canvas'></div>
-
-      <div class="ui-wrap">
-        <div class="icon settings-icon fade-in"></div>
-
-        <div class="ui-zoom">
-          <div class="icon zoom-icon zoom-in fade-in"></div>
-          <div class="icon zoom-icon zoom-out fade-in"></div>
-        </div>
-
-        <div class="ui-pan">
-          <div class="icon pan-icon pan-up fade-in"></div>
-          <div class="icon pan-icon pan-left fade-in"></div>
-          <div class="icon pan-icon pan-right fade-in"></div>
-          <div class="icon pan-icon pan-down fade-in"></div>
-        </div>
-      </div>
-
+      <canvas id='canvas'>
     </div>
+
+    <div class="ui-wrap">
+      <div class="icon settings-icon fade-in"></div>
+      <div class="ui-zoom">
+        <div class="icon zoom-icon zoom-in fade-in"></div>
+        <div class="icon zoom-icon zoom-out fade-in"></div>
+      </div>
+      <div class="ui-pan">
+        <div class="icon pan-icon pan-up fade-in"></div>
+        <div class="icon pan-icon pan-left fade-in"></div>
+        <div class="icon pan-icon pan-right fade-in"></div>
+        <div class="icon pan-icon pan-down fade-in"></div>
+      </div>
+    </div>
+
 
     <div class="settings-overlay fade-out">
       <div class="icon settings-icon"></div>
@@ -61,36 +58,12 @@
           <button id="setSettings" action="setSettings">Set</button>
         </form>
 
+        <button id="animate-button">Animate</button>
+        <button id="save-view">Save View</button>
+        <button id="load-view">Load View</button>
+
       </div>
     </div>
-
-    <div class="legacy-ui is-hidden">
-      <form id="settingsForm" onsubmit="return false">
-        <label for="iterations">Iterations</label>
-        <input id="iterations" type="number"></input>
-        <label for="magnification">Magnification</label>
-        <input id="magnification"></input>
-        <input id="setSettings" type="submit"></input>
-      </form>
-
-      <button id="animate-button">Animate</button>
-      <button id="save-view">Save View</button>
-      <button id="load-view">Load View</button>
-      <button id="capture-view">Capture View</button>
-
-
-      <div>
-        <span>
-            Pan: Arrow Keys or WASD
-            <br>
-            Zoom: - / + or < / >
-        </span>
-
-        <span style="float: right;" id="renderTimeDisplay">
-        </span>
-      </div>
-    </div>
-
 
     <script src="src/UI.js"></script>
     <script src="src/utils.js"></script>

@@ -1,16 +1,10 @@
 let width = window.innerWidth;
 let height = window.innerHeight;
-// const width = 600 * 3 // window.innerWidth;
-// const height = 480 * 2 // window.innerHeight;
 const workerCount = 3
 
 let workers = []
-let running = false
-
-let isRendering = false
 
 // View settings
-
 let viewSettings = {
   panSpeed: 30,
   zoomFactor: .2,
@@ -22,21 +16,14 @@ let viewSettings = {
   resolutionFactor: 1
 }
 
-let shouldRender = false;
-let renderStart, renderFinish
-
-
 // Set up canvas, get refs to html
-const canvas = document.createElement('canvas');
+const canvas = document.querySelector('#canvas');
 canvas.width = width;
 canvas.height = height;
-document.getElementById('canvas').appendChild(canvas);
 const ctx = canvas.getContext('2d');
 ctx.translate(width / 2, height / 2)
 
 const iterationInput = document.getElementById('iterations');
-const magnificationInput = document.getElementById('magnification');
-const renderTimeDisplay = document.getElementById('renderTimeDisplay')
 
 function draw() {
   startJob()
@@ -44,7 +31,6 @@ function draw() {
   // Set settings pannel
   let { magnification, panX, panY, iterations } = viewSettings
   iterationInput.value = iterations;
-  magnificationInput.value = magnification;
 }
 
 function zoomIn(e) {
@@ -122,7 +108,6 @@ function handleKeyDown(e) {
 }
 
 function setSettings(e) {
-
   viewSettings.iterations = iterationInput.value
   viewSettings.color = document.querySelector('.color-select').value
 
@@ -173,15 +158,13 @@ function stopPropagationAndPreventDefault(e) {
 }
 
 function handleResize() {
-  // document.getElementById('setSettings').innerHTML = ([
-  //   `window.innerHeight: ${window.innerHeight}`,
-  //   'screen.height: ' + screen.height,
-  //   'screen.width: ' + screen.width,
-  //   'window.outerHeight: ' + window.outerHeight
-  // ].join('<br>'))
   const { resolutionFactor } = viewSettings
-  const heightDiff = window.innerHeight - (height / resolutionFactor)
-  if (heightDiff > 0 || heightDiff < -100) {
+  // Only resize for significant change to prevent rerender when
+  // mobile browser UI changes window.innerHeight
+  const hDiff = window.innerHeight - (height / resolutionFactor)
+  const wDiff = window.innerWidth - (width / resolutionFactor)
+  const shouldResize = hDiff > 0 || hDiff < -100 || wDiff > 0 || wDiff < -100
+  if (shouldResize) {
     width = window.innerWidth * resolutionFactor
     height = window.innerHeight * resolutionFactor
     canvas.width = width
@@ -189,10 +172,6 @@ function handleResize() {
     ctx.translate(width / 2, height / 2)
     draw()
   }
-}
-
-function getHeight() {
-  // TODO get innerHeight for desktop, screen height for mobile
 }
 
 function decreaseIterations(e) {

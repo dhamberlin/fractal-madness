@@ -64,11 +64,11 @@ function checkJob(job) {
   const counts = []
 
   for (let i in pixels) {
-    const { x, y } = pixels[i]
-    const currentX = (x / magnification) - panX
-    const currentY = (y / magnification) - panY
+    const { x, y, currentX, currentY } = pixels[i]
+    // const currentX = (x / magnification) - panX
+    // const currentY = (y / magnification) - panY
     const count = checkPixel(currentX, currentY, iterations)
-    counts.push({ x, y, count})
+    counts.push({ x, y, currentX, currentY, count})
   }
   return counts
 }

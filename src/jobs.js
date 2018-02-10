@@ -1,9 +1,15 @@
 const BATCH_SIZE = 100
 
 let jobNum = 0
-let jobs = []
-let jobsFinished
+let iterator // store iterator for current job
+let VS // store light version of viewSettings obj for faster serialization
 
+let renderStartTime, renderFinishTime
+
+const pixelCache = {
+  last: {},
+  current: {}
+}
 
 function spawnWorkers() {
   for (let i = 0; i < workerCount; i++) {
@@ -13,38 +19,11 @@ function spawnWorkers() {
   }
 }
 
-jobMaker = {
-  fromCenter: () => {
-    let { width, height } = canvas
-    for (let i = 0; i < width / 2; i++) {
-      let row = i
-      jobs.push({
-        jobNum,
-        row,
-        width,
-        height,
-        viewSettings,
-      })
-      row = width - 1 - i
-      jobs.push({
-        jobNum,
-        row,
-        width,
-        height,
-        viewSettings,
-      })
-    }
-  },
-}
-
-let iterator // store iterator for current job
-let VS // store light version of viewSettings obj for faster serialization
-
 function startJob() {
-  if (running) stopJob()
-  running = true
   jobNum++
-  renderStart = performance.now()
+  pixelCache.last = pixelCache.current
+  pixelCache.current = {}
+  renderStartTime = performance.now()
 
   let { width, height } = canvas
   iterator = spiralMaker(width, height)
@@ -58,10 +37,6 @@ function startJob() {
   }
 }
 
-function stopJob() {
-  jobs = []
-}
-
 const fills = {
   rgb: count => `rgb(0,${Math.floor(count * 2.56)}, 0)`,
   red: count => `rgb(${Math.floor(count * 2.56)}, 0, 0)`,
@@ -72,15 +47,17 @@ const fills = {
 
 function finishJob(msg) {
   const job = msg.data
-  if (job.jobNum !== jobNum) return
+  if (job.jobNum !== jobNum) {
+    console.log('old job')
+    return
+  }
 
   const { counts, workerId } = job
-  for (let i in counts) {
-    const { x, y, count } = counts[i]
-    ctx.fill()
-    ctx.fillStyle = fills[viewSettings.color](count)
-    ctx.fillRect(x, y, 1, 1)
+  for (let pixel of counts) {
+    drawPixel(pixel)
+    pixelCache.current[`${pixel.currentX},${pixel.currentY}`] = pixel.count
   }
+
 
   const newJob = makeJob()
 
@@ -88,10 +65,16 @@ function finishJob(msg) {
     newJob.workerId = workerId
     workers[workerId].postMessage(newJob)
   } else {
-    isRendering = false
-    renderFinish = performance.now()
-    renderTimeDisplay.innerHTML = `renderTime: ${renderFinish - renderStart}`
+    const renderFinishTime = performance.now()
+    console.log(`render time for job ${jobNum}: ${renderFinishTime - renderStartTime}ms`)
   }
+}
+
+function drawPixel(pixel) {
+  const { x, y, count } = pixel
+  ctx.fill()
+  ctx.fillStyle = fills[viewSettings.color](count)
+  ctx.fillRect(x, y, 1, 1)
 }
 
 function* spiralMaker(w, h) {
@@ -130,8 +113,19 @@ function makeJob() {
 
   for (let i = 0; i < BATCH_SIZE; i++) {
     const pixel = iterator.next().value
+    const { x, y } = pixel
+    pixel.currentX = (x / viewSettings.magnification) - viewSettings.panX
+    pixel.currentY = (y / viewSettings.magnification) - viewSettings.panY
+    const cacheKey = `${pixel.currentX},${pixel.currentY}`
     if (pixel) {
-      pixels.push(pixel)
+      let cachedPixel = pixelCache.last[cacheKey]
+      if (cachedPixel) {
+        console.log('found in cache')
+        drawPixel({x, y, count: cachedPixel })
+        pixelCache.current[cacheKey] = cachedPixel
+      } else {
+        pixels.push(pixel)
+      }
     }
   }
 
@@ -140,7 +134,7 @@ function makeJob() {
     pixels,
     width,
     height,
-    viewSettings: VS
+    viewSettings
   }
 
 }
