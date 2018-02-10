@@ -216,17 +216,6 @@ function getHeight() {
   // TODO get innerHeight for desktop, screen height for mobile
 }
 
-const icons = Array.from(document.querySelectorAll('.ui-wrap .icon'))
-function toggleUI() {
-  console.log(icons)
-  console.log(icons[0].classList)
-  if (icons[0].classList.contains('fade-in')) {
-    icons.forEach(i => i.classList.replace('fade-in', 'fade-out'))
-  } else {
-    icons.forEach(i => i.classList.replace('fade-out', 'fade-in'))
-  }
-}
-
 let isSettingsPanelOpen = false
 function toggleSettingsPanel (e) {
   if (e) {
@@ -276,7 +265,7 @@ document.querySelector('.pan-left').addEventListener('click', panLeft)
 document.querySelector('.pan-right').addEventListener('click', panRight)
 document.querySelector('.pan-up').addEventListener('click', panUp)
 document.querySelector('.pan-down').addEventListener('click', panDown)
-document.getElementById('canvas-wrapper').addEventListener('click', toggleUI)
+document.getElementById('canvas-wrapper').addEventListener('click', utils.toggleUI)
 window.addEventListener('resize', handleResize)
 
 // disable double-tab zoom on ui icons
