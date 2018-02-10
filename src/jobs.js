@@ -6,8 +6,6 @@ let VS // store light version of viewSettings obj for faster serialization
 
 let renderStartTime, renderFinishTime
 
-let pixelCache = {}
-
 function spawnWorkers() {
   for (let i = 0; i < workerCount; i++) {
     workers[i] = new Worker('/src/mandelbrotWorker.js')
@@ -21,9 +19,6 @@ function startJob() {
   VS = { panX, panY, iterations, magnification }
 
   jobNum++
-  if (magnification !== pixelCache.magnification) {
-    pixelCache = { magnification }
-  }
   renderStartTime = performance.now()
 
   let { width, height } = canvas
@@ -55,7 +50,6 @@ function finishJob(msg) {
   const { counts, workerId } = job
   for (let pixel of counts) {
     drawPixel(pixel)
-    pixelCache[`${pixel.currentX},${pixel.currentY}`] = pixel.count
   }
 
 
@@ -110,24 +104,14 @@ function* spiralMaker(w, h) {
 
 function makeJob() {
   const pixels = []
-  let jobFinished = false
 
-  while (pixels.length < BATCH_SIZE && !jobFinished) {
-    const { value: pixel, done } = iterator.next()
-    jobFinished = done
+  for (let i = 0; pixels.length < BATCH_SIZE; i++) {
+    const pixel = iterator.next().value
     if (pixel) {
       const { x, y } = pixel
       pixel.currentX = (x / viewSettings.magnification) - viewSettings.panX
       pixel.currentY = (y / viewSettings.magnification) - viewSettings.panY
-      const cacheKey = `${pixel.currentX},${pixel.currentY}`
-      let cachedPixel = pixelCache[cacheKey]
-      if (cachedPixel) {
-        drawPixel({x, y, count: cachedPixel })
-      } else {
-        pixels.push(pixel)
-      }
-    } else {
-      console.log(iterator.next().done)
+      pixels.push(pixel)
     }
   }
 
