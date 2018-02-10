@@ -77,6 +77,10 @@ img {
   touch-action: none;
 }
 
+.controls {
+  height: 100%;
+}
+
 .ui-zoom {
   position: absolute;
   right: 0;

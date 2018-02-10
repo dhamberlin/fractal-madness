@@ -6,10 +6,7 @@ let VS // store light version of viewSettings obj for faster serialization
 
 let renderStartTime, renderFinishTime
 
-const pixelCache = {
-  last: {},
-  current: {}
-}
+let pixelCache = {}
 
 function spawnWorkers() {
   for (let i = 0; i < workerCount; i++) {
@@ -20,15 +17,18 @@ function spawnWorkers() {
 }
 
 function startJob() {
+  const { panX, panY, iterations, magnification } = viewSettings
+  VS = { panX, panY, iterations, magnification }
+
   jobNum++
-  pixelCache.last = pixelCache.current
-  pixelCache.current = {}
+  if (magnification !== pixelCache.magnification) {
+    pixelCache = { magnification }
+  }
   renderStartTime = performance.now()
 
   let { width, height } = canvas
   iterator = spiralMaker(width, height)
-  const { panX, panY, iterations, magnification } = viewSettings
-  VS = { panX, panY, iterations, magnification }
+
 
   for (let i in workers) {
     const job = makeJob()
@@ -55,7 +55,7 @@ function finishJob(msg) {
   const { counts, workerId } = job
   for (let pixel of counts) {
     drawPixel(pixel)
-    pixelCache.current[`${pixel.currentX},${pixel.currentY}`] = pixel.count
+    pixelCache[`${pixel.currentX},${pixel.currentY}`] = pixel.count
   }
 
 
@@ -110,22 +110,24 @@ function* spiralMaker(w, h) {
 
 function makeJob() {
   const pixels = []
+  let jobFinished = false
 
-  for (let i = 0; i < BATCH_SIZE; i++) {
-    const pixel = iterator.next().value
-    const { x, y } = pixel
-    pixel.currentX = (x / viewSettings.magnification) - viewSettings.panX
-    pixel.currentY = (y / viewSettings.magnification) - viewSettings.panY
-    const cacheKey = `${pixel.currentX},${pixel.currentY}`
+  while (pixels.length < BATCH_SIZE && !jobFinished) {
+    const { value: pixel, done } = iterator.next()
+    jobFinished = done
     if (pixel) {
-      let cachedPixel = pixelCache.last[cacheKey]
+      const { x, y } = pixel
+      pixel.currentX = (x / viewSettings.magnification) - viewSettings.panX
+      pixel.currentY = (y / viewSettings.magnification) - viewSettings.panY
+      const cacheKey = `${pixel.currentX},${pixel.currentY}`
+      let cachedPixel = pixelCache[cacheKey]
       if (cachedPixel) {
-        console.log('found in cache')
         drawPixel({x, y, count: cachedPixel })
-        pixelCache.current[cacheKey] = cachedPixel
       } else {
         pixels.push(pixel)
       }
+    } else {
+      console.log(iterator.next().done)
     }
   }
 
