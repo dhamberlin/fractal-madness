@@ -210,6 +210,7 @@ input[type="checkbox"] {
   justify-content: center;
   align-items: center;
   overflow: hidden;
+  visibility: hidden;
 }
 .settings-panel {
   position: absolute;

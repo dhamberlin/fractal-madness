@@ -69,44 +69,6 @@ function panDown (e) {
   draw()
 }
 
-function handleKeyDown(e) {
-  if (e.key === 'Escape') {
-    UI.toggleSettingsPanel()
-  }
-  if (UI.state.isSettingsPanelOpen) {
-    return
-  }
-  const { magnification, zoomFactor, panSpeed } = viewSettings
-  switch (e.key) {
-    case 'ArrowRight':
-    case 'd':
-      panRight(e)
-      break;
-    case 'ArrowLeft':
-    case 'a':
-      panLeft()
-      break;
-    case 'ArrowUp':
-    case 'w':
-      panUp()
-      break;
-    case 'ArrowDown':
-    case 's':
-      panDown()
-      break;
-    case ',':
-    case '-':
-      zoomOut()
-      break;
-    case '.':
-    case '=':
-      zoomIn()
-      break;
-    default:
-      break;
-  }
-}
-
 function setSettings(e) {
   viewSettings.iterations = iterationInput.value
   viewSettings.color = document.querySelector('.color-select').value

@@ -8,16 +8,10 @@ const UI = {
   },
 
   toggleUI() {
-    console.log('activate')
     const controls = document.querySelector('.controls')
-    console.log(controls)
-    // const icons = Array.from(document.querySelectorAll('.ui-wrap .icon'))
     if (controls.classList.contains('fade-in')) {
-      console.log('skljljk')
-      // icons.forEach(i => i.classList.replace('fade-in', 'fade-out'))
       controls.classList.replace('fade-in', 'fade-out')
     } else {
-      // icons.forEach(i => i.classList.replace('fade-out', 'fade-in'))
       controls.classList.replace('fade-out', 'fade-in')
     }
   },
