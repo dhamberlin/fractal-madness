@@ -23,22 +23,13 @@ function checkJob(job) {
     viewSettings: { iterations },
   } = job
 
-  // return pixels.map(({ x, y, currentX, currentY }) => ({
-  //   x,
-  //   y,
-  //   currentX,
-  //   currentY,
-  //   count: checkPixel(currentX, currentY, iterations)
-  // }))
-  // const counts = []
-
-  for (let i = 0; i < pixels.length; i++) {
-    const { currentX, currentY } = pixels[i]
-    pixels[i].count = checkPixel(currentX, currentY, iterations)
-    // counts.push({ x, y, currentX, currentY, count})
-  }
-  // return counts
-  return pixels
+  return pixels.map(({ x, y, currentX, currentY }) => ({
+    x,
+    y,
+    currentX,
+    currentY,
+    count: checkPixel(currentX, currentY, iterations)
+  }))
 }
 
 onmessage = (msg) => {
