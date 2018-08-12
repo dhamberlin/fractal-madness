@@ -140,11 +140,11 @@ input[type="checkbox"] {
 }
 
 .zoom-in {
-  background-image: url("src/icons/plus.svg");
+  background-image: url("icons/plus.svg");
 }
 
 .zoom-out {
-  background-image: url("src/icons/minus.svg")
+  background-image: url("icons/minus.svg")
 }
 
 .ui-pan {
@@ -159,7 +159,7 @@ input[type="checkbox"] {
   position: absolute;
   width: 3rem;
   height: 3rem;
-  background-image: url("src/icons/angle.svg");
+  background-image: url("icons/angle.svg");
   background-position: center;
   background-size: 100%;
 }
@@ -193,7 +193,7 @@ input[type="checkbox"] {
   right: 1rem;
   width: 3.5rem;
   height: 3.5rem;
-  background-image: url("src/icons/gear.svg");
+  background-image: url("icons/gear.svg");
   background-position: center;
   background-size: 100%;
   z-index: 2;
