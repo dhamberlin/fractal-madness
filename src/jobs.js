@@ -1,4 +1,4 @@
-const BATCH_SIZE = 1000
+const BATCH_SIZE = 300
 
 let jobNum = 0
 let iterator // store iterator for current job
