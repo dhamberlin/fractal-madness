@@ -1,6 +1,6 @@
 let width = window.innerWidth;
 let height = window.innerHeight;
-const workerCount = 3
+const workerCount = 7
 
 let workers = []
 
@@ -12,9 +12,10 @@ let viewSettings = {
   panX: .5,
   panY: 0,
   iterations: 60,
-  color: 'red',
+  color: 'vapor',
   resolutionFactor: 1
 }
+
 
 // Set up canvas, get refs to html
 const canvas = document.querySelector('#canvas');
@@ -23,14 +24,27 @@ canvas.height = height;
 const ctx = canvas.getContext('2d');
 ctx.translate(width / 2, height / 2)
 
+const bufferCanvas = document.createElement('canvas')
+bufferCanvas.width = width
+bufferCanvas.height = height
+const bufferCtx = bufferCanvas.getContext('2d')
+bufferCtx.translate(width / 2, height / 2)
+
+function paint() {
+  ctx.drawImage(bufferCanvas, 0, 0)
+  requestAnimationFrame(paint)
+}
+// requestAnimationFrame(paint)
+
+// setInterval(paint, 16)
+
 const iterationInput = document.getElementById('iterations');
 
 function draw() {
   startJob()
 
-  // Set settings pannel
-  let { magnification, panX, panY, iterations } = viewSettings
-  iterationInput.value = iterations;
+  // Update settings pannel
+  iterationInput.value = viewSettings.iterations
 }
 
 function zoomIn(e) {
@@ -104,7 +118,6 @@ function captureView() {
   img.style.width = width
   img.style.height = height
   document.body.appendChild(img)
-
 }
 
 function handleAnimateClick() {

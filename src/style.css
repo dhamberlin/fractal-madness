@@ -21,7 +21,7 @@ span {
   color: "#bbb"
 }
 .animate {
-  -webkit-animation: filter-animation 59s infinite;
+  -webkit-animation: filter-animation 10s infinite;
 }
 img {
   -webkit-animation: filter-animation-2 15s infinite;

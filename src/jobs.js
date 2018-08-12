@@ -1,4 +1,4 @@
-const BATCH_SIZE = 100
+const BATCH_SIZE = 1000
 
 let jobNum = 0
 let iterator // store iterator for current job
@@ -32,12 +32,18 @@ function startJob() {
   }
 }
 
+const rotateFill = 400
+const saturation = 100 //(50 + count) % 100
+const spread = 3
+
 const fills = {
   rgb: count => `rgb(0,${Math.floor(count * 2.56)}, 0)`,
   red: count => `rgb(${Math.floor(count * 2.56)}, 0, 0)`,
   blue: count => `rgb(0, 0, ${Math.floor(count * 2.56)})`,
   green: count => `rgb(0,${Math.floor(count * 2.56)}, 0)`,
-  hsl: count => `hsl(0, 100%, ${count}%)`
+  hsl: count => `hsl(0, 100%, ${count}%)`,
+  vapor: count => `hsl(${(count * 2 + 200) % 360}, 100%, ${count * .7}%)`,
+  experimental: count => `hsl(${(count * spread + rotateFill) % 360}, ${saturation}%, ${count * count / 100}%)`,
 }
 
 function finishJob(msg) {
@@ -48,8 +54,8 @@ function finishJob(msg) {
   }
 
   const { counts, workerId } = job
-  for (let pixel of counts) {
-    drawPixel(pixel)
+  for (let i = 0; i < counts.length; i++) {
+    drawPixel(counts[i])
   }
 
 
@@ -112,6 +118,8 @@ function makeJob() {
       pixel.currentX = (x / viewSettings.magnification) - viewSettings.panX
       pixel.currentY = (y / viewSettings.magnification) - viewSettings.panY
       pixels.push(pixel)
+    } else {
+      break
     }
   }
 

@@ -37,7 +37,6 @@ const UI = {
     if (UI.state.isSettingsPanelOpen) {
       return
     }
-    const { magnification, zoomFactor, panSpeed } = viewSettings
     switch (e.key) {
       case 'ArrowRight':
       case 'd':
